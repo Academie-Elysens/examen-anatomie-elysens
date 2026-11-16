@@ -285,6 +285,52 @@ input.f:focus{outline:2px solid var(--or);border-color:transparent;background:#f
   .pills{grid-template-columns:repeat(7,1fr)}
   .toasts{left:14px;right:14px;top:78px;max-width:none}
 }
+.imprime{display:none}
+
+/* ------------------------------------------------------------ impression
+   Le rapport sort en noir sur blanc, dans la typographie du cahier. Aucun
+   aplat sombre, aucune encre gaspillee, et une question ne se coupe jamais
+   entre son enonce et sa correction. */
+@media print{
+  @page{margin:18mm 16mm}
+  html,body{background:#fff !important}
+  body{color:#000 !important;font-family:"Times New Roman",Times,serif;font-size:11pt}
+  .top,.toasts,.modal,.pause,.tabs,.note,.apres,.ring,.mbars,
+  .btn,.watch,.bar,.chips{display:none !important}
+  .screen{display:none !important}
+  /* l'ecran arrive a l'ecran par un fondu : a l'impression il etait fige
+     a onze pour cent d'opacite, et tout sortait delave */
+  #s-res{display:block !important;padding:0;margin:0;max-width:none;
+         opacity:1 !important;animation:none !important;transform:none !important}
+  #s-res *{animation:none !important}
+  .imprime{display:block !important;margin-bottom:14mm}
+  .i-marque{font-size:12pt;font-weight:700;letter-spacing:.32em;color:#0C2613;
+            text-align:center;border-bottom:1.6pt solid #9EC8B0;padding-bottom:5pt}
+  .i-sur{margin-top:9mm;font-size:9pt;font-weight:700;letter-spacing:.24em;color:#E0732E}
+  .i-titre{font-family:"Times New Roman",Times,serif;font-size:24pt;color:#0C2613;
+           margin:2pt 0 0;font-weight:700}
+  .i-sous{font-style:italic;font-size:12pt;margin-top:2pt}
+  .i-info{margin-top:7mm;padding:6pt 10pt;border-left:3pt solid #0C2613;
+          background:#F2EDE4 !important;-webkit-print-color-adjust:exact;
+          print-color-adjust:exact;font-size:10.5pt;line-height:1.55}
+  .res-hero{display:block !important;background:none !important;color:#000 !important;
+            box-shadow:none !important;padding:0 !important;margin:0 !important}
+  .res-hero .eyebrow,.res-hero h2,#res-sub{display:none !important}
+  .review{display:block !important;margin:0}
+  .rv{display:flex;gap:8pt;background:#fff !important;border:.6pt solid #BBB !important;
+      border-radius:0 !important;padding:7pt 9pt !important;margin:0 0 6pt;
+      box-shadow:none !important;break-inside:avoid;page-break-inside:avoid}
+  .rv .badge{background:#fff !important;color:#000 !important;border:.6pt solid #666;
+             min-width:17pt;height:17pt;line-height:16pt;text-align:center;
+             border-radius:0 !important;font-size:9.5pt}
+  .rv .q{font-family:"Times New Roman",Times,serif;font-size:11pt;color:#000 !important;
+         font-weight:700;margin:0 0 3pt}
+  .rv .a{font-size:10.5pt;margin:1pt 0}
+  .rv .a.good{color:#0C2613 !important;font-weight:700}
+  .rv .a.bad{color:#8C0009 !important}
+  .rv .j{font-size:10pt;color:#222 !important;margin:3pt 0 0}
+  .rv .s{font-size:8.5pt;color:#555 !important;letter-spacing:.06em;margin-top:3pt}
+}
 </style>
 </head>
 <body>
@@ -433,6 +479,15 @@ input.f:focus{outline:2px solid var(--or);border-color:transparent;background:#f
 
 <!-- ============================================================ RESULTATS -->
 <section class="screen" id="s-res">
+  <!-- visible seulement a l'impression : la meme couverture que le cahier
+       papier, en noir sur blanc, sans aplats de couleur -->
+  <div class="imprime" id="tete-imprime">
+    <div class="i-marque">ACAD&Eacute;MIE &Eacute;LYSENS</div>
+    <div class="i-sur">EXAMEN DE FIN DE SYST&Egrave;ME</div>
+    <h1 class="i-titre">Le Syst&egrave;me Digestif</h1>
+    <div class="i-sous">Rapport d&rsquo;examen de l&rsquo;&eacute;l&egrave;ve</div>
+    <div class="i-info" id="i-info"></div>
+  </div>
   <div class="res-hero">
     <div class="ring">
       <svg width="220" height="220" viewBox="0 0 220 220">
@@ -456,6 +511,10 @@ input.f:focus{outline:2px solid var(--or);border-color:transparent;background:#f
   </div>
   <div id="review" class="review"></div>
   <p class="note" id="note-envoi"></p>
+  <div class="apres" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+    <button class="btn btn-vert" id="imprimer">Imprimer ou enregistrer en PDF</button>
+    <button class="btn btn-ghost" id="reessayer" style="display:none">R&eacute;essayer l'envoi</button>
+  </div>
 </section>
 </main>
 
@@ -489,7 +548,11 @@ input.f:focus{outline:2px solid var(--or);border-color:transparent;background:#f
 </div>
 
 <script>
-const Q = [{"q": "Une cliente sous médication décrit une bouche sèche permanente et dit que plus rien n'a de goût. Qu'est-ce qui explique cette perte ?", "o": ["Les papilles gustatives se raréfient dès que la muqueuse de la bouche reste sèche pendant trop longtemps.", "Le nerf qui porte le goût s'engourdit lorsque la salive cesse de l'humecter de façon continue.", "Les molécules du goût doivent se dissoudre dans la salive pour atteindre les récepteurs des papilles.", "Les récepteurs du goût migrent vers le fond de la langue quand la bouche s'assèche durablement."], "g": 2, "m": 1, "s": "5.1. Les papilles gustatives, les capteurs du goût", "sl": "1.5.1", "t": "Physiologie", "j": "Les molécules responsables du goût doivent être dissoutes dans la salive pour atteindre les récepteurs. C'est pourquoi une bouche sèche ne goûte pratiquement rien. Le nombre de papilles et la position des récepteurs, eux, ne changent pas.", "r": 14}, {"q": "Un client prend de l'ibuprofène presque tous les jours depuis un an. Pourquoi ce médicament augmente-t-il son risque d'ulcère ?", "o": ["Il bloque les prostaglandines, ce qui monte l'acidité et fragilise en même temps la couche protectrice.", "Il bloque la pompe à protons, ce qui prive la muqueuse de l'acide dont elle a besoin pour se défendre.", "Il irrite directement la paroi au contact, le comprimé se dissolvant toujours au même endroit de l'estomac.", "Il stimule les cellules G, ce qui augmente la gastrine et la sécrétion acide qui en découle aussitôt."], "g": 0, "m": 2, "s": "3.4.1. La sécrétion acide, comment l'estomac fabrique et contrôle son acidité", "sl": "2.3.4.1", "t": "Physiologie", "j": "Les anti-inflammatoires courants bloquent la fabrication des prostaglandines dans tout le corps pour réduire la douleur. Or ces mêmes prostaglandines protègent l'estomac : leur blocage augmente l'acidité et fragilise la couche protectrice. C'est cette double perte de protection qui explique les ulcères à long terme.", "r": 5}, {"q": "Une cliente demande si le probiotique qu'elle a acheté vaut quelque chose. Que dit la définition retenue dans le cahier ?", "o": ["Un micro-organisme vivant qui s'implante durablement dans le côlon et y remplace la flore affaiblie.", "Une fibre fermentescible qui nourrit les bactéries déjà présentes et favorise ainsi leur multiplication.", "Un ferment tiré d'un aliment fermenté, dont le bénéfice vaut pour toutes les situations digestives.", "Un micro-organisme vivant qui, en quantité suffisante, procure un bénéfice démontré dans un usage précis."], "g": 3, "m": 3, "s": "5.7.2. Le probiotique : un renfort de passage", "sl": "3.5.7.2", "t": "Suppléments", "j": "Deux mots comptent dans cette définition : démontré, et dans un usage précis. Un bénéfice établi pour une souche et une situation ne se reporte pas sur les autres. Le probiotique est un renfort de passage, non un colon qui s'installe, et la fibre fermentescible décrit un prébiotique.", "r": 23}, {"q": "Dans la démarche d'estimation, le besoin nutritionnel et l'état nutritionnel ne désignent pas la même chose. Que décrit le second ?", "o": ["La quantité d'un nutriment qu'une personne devrait recevoir chaque jour pour couvrir ses besoins.", "La situation réelle de la personne : ses ressources, ses réserves et les conséquences d'un déséquilibre.", "La moyenne établie sur un groupe de référence, dont on déduit ce qui convient à chaque personne.", "La part des apports qui provient d'aliments entiers plutôt que de produits transformés en usine."], "g": 1, "m": 4, "s": "7. Estimer et analyser", "sl": "4.8", "t": "Clinique", "j": "L'état nutritionnel décrit la situation réelle de la personne, soit ses ressources, ses réserves et les conséquences éventuelles d'un déséquilibre. Le besoin nutritionnel, lui, décrit ce qu'il faudrait recevoir. L'un se constate, l'autre s'estime.", "r": 16}, {"q": "Un client se dit épuisé après chaque repas, avec des selles molles et une digestion qui traîne. Quel tableau MTC reconnaissez-vous ?", "o": ["Une Stagnation du Qi du Foie, qui bloque la libre circulation et tend les hypocondres.", "Un Feu de l'Estomac, qui consume les liquides et donne faim et brûlures après les repas.", "Un Vide de Qi de la Rate, qui ne transforme plus ni ne transporte avec assez de force.", "Une Humidité-Chaleur de la Vésicule, qui alourdit le corps et jaunit l'enduit de la langue."], "g": 2, "m": 2, "s": "7.5. Rappel MTC, Le Pancréas", "sl": "2.7.5", "t": "MTC", "j": "Un Vide de Qi de la Rate se traduit par une fatigue après les repas, des selles molles et une digestion faible. La Rate gouverne la transformation et le transport : quand son Qi manque, les trois signes apparaissent ensemble.", "r": 30}];
+const Q = [{"q": "Une cliente sous médication décrit une bouche sèche permanente et dit que plus rien n'a de goût. Qu'est-ce qui explique cette perte ?", "o": ["Les papilles gustatives se raréfient dès que la muqueuse de la bouche reste sèche pendant trop longtemps.", "Le nerf qui porte le goût s'engourdit lorsque la salive cesse de l'humecter de façon continue.", "Les molécules du goût doivent se dissoudre dans la salive pour atteindre les récepteurs des papilles.", "Les récepteurs du goût migrent vers le fond de la langue quand la bouche s'assèche durablement."], "m": 1}, {"q": "Un client prend de l'ibuprofène presque tous les jours depuis un an. Pourquoi ce médicament augmente-t-il son risque d'ulcère ?", "o": ["Il bloque les prostaglandines, ce qui monte l'acidité et fragilise en même temps la couche protectrice.", "Il bloque la pompe à protons, ce qui prive la muqueuse de l'acide dont elle a besoin pour se défendre.", "Il irrite directement la paroi au contact, le comprimé se dissolvant toujours au même endroit de l'estomac.", "Il stimule les cellules G, ce qui augmente la gastrine et la sécrétion acide qui en découle aussitôt."], "m": 2}, {"q": "Une cliente demande si le probiotique qu'elle a acheté vaut quelque chose. Que dit la définition retenue dans le cahier ?", "o": ["Un micro-organisme vivant qui s'implante durablement dans le côlon et y remplace la flore affaiblie.", "Une fibre fermentescible qui nourrit les bactéries déjà présentes et favorise ainsi leur multiplication.", "Un ferment tiré d'un aliment fermenté, dont le bénéfice vaut pour toutes les situations digestives.", "Un micro-organisme vivant qui, en quantité suffisante, procure un bénéfice démontré dans un usage précis."], "m": 3}, {"q": "Dans la démarche d'estimation, le besoin nutritionnel et l'état nutritionnel ne désignent pas la même chose. Que décrit le second ?", "o": ["La quantité d'un nutriment qu'une personne devrait recevoir chaque jour pour couvrir ses besoins.", "La situation réelle de la personne : ses ressources, ses réserves et les conséquences d'un déséquilibre.", "La moyenne établie sur un groupe de référence, dont on déduit ce qui convient à chaque personne.", "La part des apports qui provient d'aliments entiers plutôt que de produits transformés en usine."], "m": 4}, {"q": "Un client se dit épuisé après chaque repas, avec des selles molles et une digestion qui traîne. Quel tableau MTC reconnaissez-vous ?", "o": ["Une Stagnation du Qi du Foie, qui bloque la libre circulation et tend les hypocondres.", "Un Feu de l'Estomac, qui consume les liquides et donne faim et brûlures après les repas.", "Un Vide de Qi de la Rate, qui ne transforme plus ni ne transporte avec assez de force.", "Une Humidité-Chaleur de la Vésicule, qui alourdit le corps et jaunit l'enduit de la langue."], "m": 2}];
+/* La cle de correction n'est presente que pour l'entrainement, qui doit
+   pouvoir tourner sans connexion. Pour l'examen elle vaut null : c'est le
+   service de correction qui detient les bonnes reponses. */
+const CLEF = [{"g": 2, "j": "Les molécules responsables du goût doivent être dissoutes dans la salive pour atteindre les récepteurs. C'est pourquoi une bouche sèche ne goûte pratiquement rien. Le nombre de papilles et la position des récepteurs, eux, ne changent pas.", "s": "5.1. Les papilles gustatives, les capteurs du goût", "r": 14, "t": "Physiologie", "m": 1}, {"g": 0, "j": "Les anti-inflammatoires courants bloquent la fabrication des prostaglandines dans tout le corps pour réduire la douleur. Or ces mêmes prostaglandines protègent l'estomac : leur blocage augmente l'acidité et fragilise la couche protectrice. C'est cette double perte de protection qui explique les ulcères à long terme.", "s": "3.4.1. La sécrétion acide, comment l'estomac fabrique et contrôle son acidité", "r": 5, "t": "Physiologie", "m": 2}, {"g": 3, "j": "Deux mots comptent dans cette définition : démontré, et dans un usage précis. Un bénéfice établi pour une souche et une situation ne se reporte pas sur les autres. Le probiotique est un renfort de passage, non un colon qui s'installe, et la fibre fermentescible décrit un prébiotique.", "s": "5.7.2. Le probiotique : un renfort de passage", "r": 23, "t": "Suppléments", "m": 3}, {"g": 1, "j": "L'état nutritionnel décrit la situation réelle de la personne, soit ses ressources, ses réserves et les conséquences éventuelles d'un déséquilibre. Le besoin nutritionnel, lui, décrit ce qu'il faudrait recevoir. L'un se constate, l'autre s'estime.", "s": "7. Estimer et analyser", "r": 16, "t": "Clinique", "m": 4}, {"g": 2, "j": "Un Vide de Qi de la Rate se traduit par une fatigue après les repas, des selles molles et une digestion faible. La Rate gouverne la transformation et le transport : quand son Qi manque, les trois signes apparaissent ensemble.", "s": "7.5. Rappel MTC, Le Pancréas", "r": 30, "t": "MTC", "m": 2}];
 const MOD = {"1": "Les Voies Digestives Supérieures", "2": "Digestion et Organes Centraux", "3": "Absorption, Élimination et Métabolisme", "4": "De l'Aliment à la Cellule"};
 const N = 5;                     // nombre de questions
 const DUREE = 9 * 60;             // secondes
@@ -499,7 +562,8 @@ const JALONS = [
   {r: 30, titre: "Trente secondes", txt: "Terminez et vérifiez. La page se remet toute seule, comme elle le fera à l'examen.", urgent: true, bips: 3}
 ];           // secondes restantes -> avis
 const CLE = "elysens_entrainement_digestif_v1";
-const SCRIPT_URL = "";              // à remplir avec l'adresse Apps Script
+const SCRIPT_URL = "";     // adresse du service de correction
+const TITRE_EXAMEN = "Entraînement Système Digestif";
 const $ = id => document.getElementById(id);
 const S = {nom:"", courriel:"", cur:0, ans:Array(N).fill(null),
            flag:Array(N).fill(false), t0:null, done:false, avis:[], score:null,
@@ -743,85 +807,136 @@ $("m-yes").onclick = () => { $("modal").classList.remove("on"); remettre(false);
 function remettre(auto){
   if(S.done) return;
   if(S.pauseDebut) reprendre();
-  S.done = true; garder();
+  S.done = true; S.mis = DUREE - reste(); garder();
   $("ecran-pause").classList.remove("on");
-  const ok = S.ans.map((a, i) => a === Q[i].g);
-  const bons = ok.filter(Boolean).length;
-  // le barème est de deux points par question : sur cinquante questions
-  // cela fait cent points, et la note reste sur cent quel que soit N
-  const pct = Math.round(bons / N * 100);
-  S.score = pct; garder();
   show("s-res", "Résultats");
   if(auto) avis("Temps écoulé", "L'examen a été remis automatiquement.", true);
-  setTimeout(() => { $("ringc").style.strokeDashoffset = 603 * (1 - pct / 100); }, 120);
-  let n = 0;
-  const tick = setInterval(() => { n = Math.min(pct, n + 2); $("pct").textContent = n;
-                                   if(n >= pct) clearInterval(tick); }, 22);
-  const ment = pct >= 90 ? "Excellent" : pct >= 80 ? "Très bien" :
-               pct >= 70 ? "Bien" : pct >= 60 ? "Réussi" : "À reprendre";
-  $("res-title").textContent = ment + (S.nom ? ", " + S.nom.split(" ")[0] : "");
-  const mis = DUREE - reste();
-  $("res-sub").textContent = bons + " bonnes réponses sur " + N + " · durée " +
-    Math.floor(mis / 60) + " min " + String(mis % 60).padStart(2, "0") + " s";
-  const bars = Object.keys(MOD).map(m => {
-    const idx = Q.map((q, i) => i).filter(i => Q[i].m == m);
-    return ["Module " + m, idx.filter(i => ok[i]).length, idx.length];
+  corriger();
+}
+
+/* ------------------------------------------------------------- correction
+   Deux chemins, un seul rendu. L'entrainement se corrige ici parce qu'il
+   porte sa cle ; l'examen envoie les choix de l'eleve et recoit en retour
+   la note et le detail. Rien n'est affiche comme transmis tant que le
+   service n'a pas repondu. */
+function paquet(){
+  return {examen:TITRE_EXAMEN, nom:S.nom, courriel:S.courriel,
+          date:new Date().toISOString(), duree:S.mis, total:N,
+          reponses:S.ans.slice()};
+}
+
+function corrigerIci(){
+  const det = Q.map((q, i) => {
+    const k = CLEF[i], a = S.ans[i], ok = a === k.g;
+    return {i:i + 1, a:a, g:k.g, ok:ok, ta:a === null ? null : q.o[a],
+            tg:q.o[k.g], q:q.q, j:k.j, s:k.s, m:k.m, r:k.r, t:k.t};
   });
-  const mtc = Q.map((q, i) => i).filter(i => Q[i].t === "MTC");
-  bars.push(["dont la MTC", mtc.filter(i => ok[i]).length, mtc.length]);
-  $("mbars").innerHTML = bars.map(b =>
+  const bons = det.filter(d => d.ok).length;
+  const bars = Object.keys(MOD).map(m => {
+    const l = det.filter(d => d.m == m);
+    return ["Module " + m, l.filter(d => d.ok).length, l.length];
+  });
+  const mtc = det.filter(d => d.t === "MTC");
+  if(mtc.length) bars.push(["dont la MTC", mtc.filter(d => d.ok).length, mtc.length]);
+  return {ok:true, bons:bons, total:N, pct:Math.round(bons / N * 100),
+          bars:bars, det:det};
+}
+
+function etatEnvoi(classe, texte){
+  $("note-envoi").textContent = texte;
+  $("reessayer").style.display = classe === "erreur" ? "" : "none";
+}
+
+function corriger(){
+  if(CLEF){ afficher(corrigerIci());
+            etatEnvoi("local", "Correction faite dans cette page. " +
+                      "Rien n'est transmis : c'est un entraînement."); return; }
+  if(!SCRIPT_URL){
+    etatEnvoi("erreur", "L'adresse du service de correction n'est pas inscrite " +
+              "dans cette page. Vos réponses sont conservées sur cet appareil.");
+    return;
+  }
+  etatEnvoi("attente", "Correction en cours…");
+  fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+                     body:JSON.stringify(paquet())})
+    .then(r => r.json())
+    .then(d => {
+      if(!d || !d.ok || !d.det) throw new Error("réponse inattendue");
+      afficher(d);
+      etatEnvoi("ok", "Copie reçue et enregistrée. Votre enseignant l'a.");
+    })
+    .catch(() => {
+      etatEnvoi("erreur", "La copie n'a pas pu être transmise. Vos réponses sont " +
+                "conservées sur cet appareil : réessayez, ou prévenez votre " +
+                "enseignant. Tant que ce message reste affiché, rien n'a été reçu.");
+    });
+}
+$("reessayer").onclick = corriger;
+
+/* --------------------------------------------------------------- affichage */
+let RAPPORT = null;
+function afficher(R){
+  RAPPORT = R;
+  setTimeout(() => { $("ringc").style.strokeDashoffset = 603 * (1 - R.pct / 100); }, 120);
+  let n = 0;
+  const tick = setInterval(() => { n = Math.min(R.pct, n + 2); $("pct").textContent = n;
+                                   if(n >= R.pct) clearInterval(tick); }, 22);
+  const ment = R.pct >= 90 ? "Excellent" : R.pct >= 80 ? "Très bien" :
+               R.pct >= 70 ? "Bien" : R.pct >= 60 ? "Réussi" : "À reprendre";
+  $("res-title").textContent = ment + (S.nom ? ", " + S.nom.split(" ")[0] : "");
+  const mis = S.mis || 0;
+  $("res-sub").textContent = R.bons + " bonnes réponses sur " + R.total + " · durée " +
+    Math.floor(mis / 60) + " min " + String(mis % 60).padStart(2, "0") + " s";
+  $("mbars").innerHTML = (R.bars || []).map(b =>
     '<div class="mbar"><span>' + b[0] + '</span><div class="t"><i style="width:0" data-w="' +
     (b[1] / b[2] * 100) + '"></i></div><span>' + b[1] + " / " + b[2] + "</span></div>").join("");
   setTimeout(() => document.querySelectorAll(".mbar i")
     .forEach(x => x.style.width = x.dataset.w + "%"), 180);
+  $("i-info").innerHTML =
+    "<b>" + echapper(S.nom) + "</b> &middot; " + echapper(S.courriel) + "<br>" +
+    new Date().toLocaleDateString("fr-CA", {day:"2-digit", month:"long", year:"numeric"}) +
+    " &middot; dur&eacute;e " + Math.floor(mis / 60) + " min " +
+    String(mis % 60).padStart(2, "0") + " s<br>" +
+    "<b>R&eacute;sultat : " + R.pct + " / 100</b> &middot; " + R.bons +
+    " bonnes r&eacute;ponses sur " + R.total;
   dessinerCorrige("tous");
-  envoyer(pct, bons);
+}
+
+function echapper(s){
+  return String(s == null ? "" : s).replace(/[&<>"]/g,
+    c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"})[c]);
 }
 
 function dessinerCorrige(filtre){
-  const ok = S.ans.map((a, i) => a === Q[i].g);
-  const liste = Q.map((q, i) => i).filter(i => filtre === "tous" || !ok[i]);
+  if(!RAPPORT){ $("review").innerHTML = ""; return; }
+  const liste = RAPPORT.det.filter(d => filtre === "tous" || !d.ok);
   if(!liste.length){
     $("review").innerHTML = '<div class="card"><h3>Aucune erreur</h3>' +
       "<p style=\"margin:0;color:var(--muted)\">Toutes les réponses sont exactes.</p></div>";
     return;
   }
-  $("review").innerHTML = liste.map(i => {
-    const q = Q[i], a = S.ans[i], bon = q.o[q.g];
-    return '<div class="rv ' + (ok[i] ? "ok" : "ko") + '"><div class="badge">' + (i + 1) +
-      '</div><div><p class="q">' + q.q + "</p>" +
-      (ok[i] ? '<p class="a good">✓ ' + "ABCD"[q.g] + ". " + bon + "</p>"
-             : (a === null ? '<p class="a" style="color:var(--ko)">Sans réponse</p>'
-                           : '<p class="a bad">' + "ABCD"[a] + ". " + q.o[a] + "</p>") +
-               '<p class="a good">✓ ' + "ABCD"[q.g] + ". " + bon + "</p>") +
-      '<p class="j">' + q.j + "</p>" +
-      '<p class="s">MODULE ' + q.m + " · SECTION " + q.s + " · QUESTION DE RÉVISION " +
-      q.r + "</p></div></div>";
-  }).join("");
+  $("review").innerHTML = liste.map(d =>
+    '<div class="rv ' + (d.ok ? "ok" : "ko") + '"><div class="badge">' + d.i +
+    '</div><div><p class="q">' + echapper(d.q) + "</p>" +
+    (d.ok ? '<p class="a good">&#10003; ' + "ABCD"[d.g] + ". " + echapper(d.tg) + "</p>"
+          : (d.a === null ? '<p class="a" style="color:var(--ko)">Sans réponse</p>'
+                          : '<p class="a bad">' + "ABCD"[d.a] + ". " + echapper(d.ta) + "</p>") +
+            '<p class="a good">&#10003; ' + "ABCD"[d.g] + ". " + echapper(d.tg) + "</p>") +
+    '<p class="j">' + echapper(d.j) + "</p>" +
+    '<p class="s">MODULE ' + d.m + " &middot; SECTION " + echapper(d.s) +
+    " &middot; QUESTION DE RÉVISION " + d.r + "</p></div></div>").join("");
 }
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
   dessinerCorrige(t.dataset.t);
 });
 
-function envoyer(pct, bons){
-  if(!SCRIPT_URL){
-    $("note-envoi").textContent = "Version d'essai : aucun résultat n'est transmis. " +
-      "L'adresse du script de collecte reste à inscrire.";
-    return;
-  }
-  $("note-envoi").textContent = "Envoi des résultats…";
-  fetch(SCRIPT_URL, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"},
-    body: JSON.stringify({
-      examen:"Système Digestif", nom:S.nom, courriel:S.courriel,
-      date:new Date().toISOString(), score:pct, bonnes:bons,
-      duree:DUREE - reste(),
-      reponses:S.ans.map((a, i) => ({q:i + 1, choix:a === null ? null : "ABCD"[a],
-                                     correct:a === Q[i].g, module:Q[i].m, section:Q[i].s}))
-    })
-  }).then(() => { $("note-envoi").textContent = "Résultats transmis à l'enseignant."; })
-    .catch(() => { $("note-envoi").textContent = "Envoi impossible. Communiquez avec votre enseignant."; });
-}
+$("imprimer").onclick = () => {
+  // on imprime toujours la copie entiere, quel que soit l'onglet affiche
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x.dataset.t === "tous"));
+  dessinerCorrige("tous");
+  setTimeout(() => window.print(), 60);
+};
 
 window.addEventListener("beforeunload", e => {
   if(S.t0 && !S.done){ e.preventDefault(); e.returnValue = ""; }
