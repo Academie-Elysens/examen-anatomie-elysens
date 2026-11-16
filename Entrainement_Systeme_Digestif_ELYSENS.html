@@ -285,6 +285,7 @@ input.f:focus{outline:2px solid var(--or);border-color:transparent;background:#f
   .pills{grid-template-columns:repeat(7,1fr)}
   .toasts{left:14px;right:14px;top:78px;max-width:none}
 }
+.aide{font-size:13px;line-height:1.5;color:var(--muted);margin:8px 0 2px}
 .imprime{display:none}
 
 /* ------------------------------------------------------------ impression
@@ -317,12 +318,18 @@ input.f:focus{outline:2px solid var(--or);border-color:transparent;background:#f
             box-shadow:none !important;padding:0 !important;margin:0 !important}
   .res-hero .eyebrow,.res-hero h2,#res-sub{display:none !important}
   .review{display:block !important;margin:0}
-  .rv{display:flex;gap:8pt;background:#fff !important;border:.6pt solid #BBB !important;
-      border-radius:0 !important;padding:7pt 9pt !important;margin:0 0 6pt;
-      box-shadow:none !important;break-inside:avoid;page-break-inside:avoid}
-  .rv .badge{background:#fff !important;color:#000 !important;border:.6pt solid #666;
-             min-width:17pt;height:17pt;line-height:16pt;text-align:center;
+  /* en bloc, et non en conteneur flexible : Safari respecte mal break-inside
+     sur un element flexible, et une question se coupait entre deux pages */
+  .rv{display:block !important;background:#fff !important;
+      border:.6pt solid #BBB !important;border-radius:0 !important;
+      padding:7pt 9pt !important;margin:0 0 6pt;box-shadow:none !important;
+      break-inside:avoid;page-break-inside:avoid;
+      -webkit-column-break-inside:avoid;overflow:visible}
+  .rv .badge{float:left;margin:0 7pt 2pt 0;background:#fff !important;
+             color:#000 !important;border:.6pt solid #666;min-width:17pt;
+             height:17pt;line-height:16pt;text-align:center;
              border-radius:0 !important;font-size:9.5pt}
+  .rv > div{overflow:hidden}
   .rv .q{font-family:"Times New Roman",Times,serif;font-size:11pt;color:#000 !important;
          font-weight:700;margin:0 0 3pt}
   .rv .a{font-size:10.5pt;margin:1pt 0}
@@ -413,6 +420,8 @@ input.f:focus{outline:2px solid var(--or);border-color:transparent;background:#f
       <input class="f" id="nom" placeholder="Pr&eacute;nom Nom" autocomplete="name">
       <label class="f" for="courriel">Courriel</label>
       <input class="f" id="courriel" placeholder="votre@courriel.com" autocomplete="email">
+      <p class="aide">Votre rapport corrig&eacute; vous sera envoy&eacute; &agrave; cette
+         adresse d&egrave;s la remise. V&eacute;rifiez-la avant de commencer.</p>
       <div class="err" id="err">Entrez votre nom et un courriel valide pour commencer.</div>
       <button class="btn btn-or full" id="go">Commencer l'entra&icirc;nement&nbsp;&rarr;</button>
       <button class="btn btn-ghost full" id="reprendre" style="display:none">Reprendre
@@ -863,7 +872,10 @@ function corriger(){
     .then(d => {
       if(!d || !d.ok || !d.det) throw new Error("réponse inattendue");
       afficher(d);
-      etatEnvoi("ok", "Copie reçue et enregistrée. Votre enseignant l'a.");
+      etatEnvoi("ok", "Copie reçue et enregistrée. Votre enseignant l'a."
+        + (d.courriel ? " Votre rapport complet part par courriel à "
+                        + S.courriel + ", vérifiez vos indésirables."
+                      : ""));
     })
     .catch(() => {
       etatEnvoi("erreur", "La copie n'a pas pu être transmise. Vos réponses sont " +
